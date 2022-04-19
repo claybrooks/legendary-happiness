@@ -1,7 +1,5 @@
-﻿using test.application;
-
-using committed;
-using test.application.actions;
+﻿using committed;
+using test.application;
 
 var committed = new Committed();
 var boxIdx = 0;
@@ -11,6 +9,8 @@ Dictionary<int, BoxElement> boxElements = new()
         boxIdx, new BoxElement(committed, new Box(new Transform2D(1, 1)))
     }
 };
+
+PrintBoxData();
 
 while (true)
 {
@@ -68,16 +68,42 @@ while (true)
             break;
     }
 
-    Console.WriteLine(BoxInfos(boxElements));
+    PrintBoxData();
 }
 
-string BoxInfos(IReadOnlyDictionary<int, BoxElement> boxes)
+string BoxInfos(IReadOnlyDictionary<int, BoxElement> boxes, int selected)
 {
+    int i = 0;
     var data = "{\n";
     foreach ((var key, var box) in boxes)
     {
-        data += $"\t{{{key}: {box.Meta}}},\n";
+        var prepend = "  ";
+        if (i == selected)
+        {
+            prepend = "* ";
+        }
+
+        var line = $"{prepend}{{{key} => {box.Meta}}},";
+        var leftOver = Console.WindowWidth - line.Length;
+        line += new string (' ', leftOver-1);
+        line += '\n';
+        data += line;
+        ++i;
     }
     data += "}";
     return data;
+}
+
+void PrintBoxData()
+{
+    Console.CursorVisible = false;
+    Console.SetCursorPosition(0, 0);
+    Console.WriteLine(BoxInfos(boxElements, boxIdx));
+    int currentPosition = Console.CursorTop;
+
+    Console.WriteLine(new string(' ', Console.WindowWidth));
+    Console.WriteLine(new string(' ', Console.WindowWidth));
+    Console.WriteLine(new string(' ', Console.WindowWidth));
+    Console.CursorTop = currentPosition;
+    Console.CursorVisible = true;
 }
