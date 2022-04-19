@@ -3,7 +3,7 @@
 using committed;
 
 var committed = new Committed();
-ObjectWrapper<Box>? box = null;
+ObjectWrapper<Box>? boxWrapper = null;
 
 while (true)
 {
@@ -12,11 +12,11 @@ while (true)
     switch (key.Key)
     {
         case ConsoleKey.C:
-            if (box == null)
+            if (boxWrapper == null || boxWrapper.Object.Deleted)
             {
                 var action = new CreateBoxAction(1, 1);
                 committed.Commit(action);
-                box = action.BoxWrapper;
+                boxWrapper = action.BoxWrapper;
             }
             else
             {
@@ -24,9 +24,9 @@ while (true)
             }
             break;
         case ConsoleKey.D:
-            if (box != null)
+            if (boxWrapper != null && !boxWrapper.Object.Deleted)
             {
-                committed.Commit(new DeleteBoxAction(box));
+                committed.Commit(new DeleteBoxAction(boxWrapper));
             }
             else
             {
@@ -34,14 +34,18 @@ while (true)
             }
             break;
         case ConsoleKey.M:
-            if (box != null)
+            if (boxWrapper != null && !boxWrapper.Object.Deleted)
             {
                 Console.Write("Enter x,y: ");
-                string input = Console.ReadLine() ?? "";
+                var input = "";
+                while (input.Count(c => c == ',') != 1)
+                {
+                    input = Console.ReadLine() ?? "";
+                }
                 var tokens = input.Split(",");
                 float x = float.Parse(tokens[0]);
                 float y = float.Parse(tokens[1]);
-                committed.Commit(new MoveBoxAction(box, x, y));
+                committed.Commit(new MoveBoxAction(boxWrapper, x, y));
             }
             else
             {
@@ -56,8 +60,8 @@ while (true)
             break;
     }
 
-    if (box != null)
+    if (boxWrapper != null)
     {
-        Console.WriteLine($"Box is at position {box.Object.Transform2D.X}:{box.Object.Transform2D.Y}");
+        Console.WriteLine($"Box is at position {boxWrapper.Object.Transform2D.X}:{boxWrapper.Object.Transform2D.Y}");
     }
 }
