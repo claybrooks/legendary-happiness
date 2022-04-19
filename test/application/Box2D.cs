@@ -160,6 +160,14 @@ namespace test.application
             }
         }
 
+        public void Create()
+        {
+            if (_wrapper.Object.Deleted)
+            {
+                _boxManipulator.Create();
+            }
+        }
+
         public void Delete()
         {
             if (!_wrapper.Object.Deleted)

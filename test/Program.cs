@@ -3,6 +3,7 @@ using test.application;
 
 var committed = new Committed();
 var boxIdx = 0;
+var boxKey = boxIdx;
 Dictionary<int, BoxElement> boxElements = new() 
 {
     {
@@ -14,17 +15,24 @@ PrintBoxData();
 
 while (true)
 {
-    var box = boxElements[boxIdx];
+    var box = boxElements[boxKey];
     var key = Console.ReadKey();
     Console.WriteLine();
     switch (key.Key)
     {
+        case ConsoleKey.A:
+            box.Create();
+            ++boxKey;
+            if (boxKey > boxIdx) { boxKey = boxIdx; }
+            break;
         case ConsoleKey.C:
             ++boxIdx;
-            boxElements.Add(boxIdx, new BoxElement(committed, new Box(new Transform2D(1,1))));
+            boxElements.Add(boxIdx, new BoxElement(committed, new Box(new Transform2D(1, 1))));
             break;
         case ConsoleKey.D:
             box.Delete();
+            --boxKey;
+            if (boxKey < 0) { boxKey = 0; }
             break;
         case ConsoleKey.M:
             Console.Write("Enter x,y: ");
@@ -64,7 +72,7 @@ while (true)
                     idx = -1;
                 }
             }
-            boxIdx = idx;
+            boxKey = idx;
             break;
     }
 
@@ -96,14 +104,35 @@ string BoxInfos(IReadOnlyDictionary<int, BoxElement> boxes, int selected)
 
 void PrintBoxData()
 {
+    int furthestPosition = Console.CursorTop;
     Console.CursorVisible = false;
     Console.SetCursorPosition(0, 0);
-    Console.WriteLine(BoxInfos(boxElements, boxIdx));
+    Console.WriteLine(GetHeader());
+    Console.WriteLine(BoxInfos(boxElements, boxKey));
     int currentPosition = Console.CursorTop;
-
-    Console.WriteLine(new string(' ', Console.WindowWidth));
-    Console.WriteLine(new string(' ', Console.WindowWidth));
-    Console.WriteLine(new string(' ', Console.WindowWidth));
+    while (currentPosition < furthestPosition)
+    {
+        Console.WriteLine(new string(' ', Console.WindowWidth));
+        --furthestPosition;
+    }
     Console.CursorTop = currentPosition;
     Console.CursorVisible = true;
+}
+
+string GetHeader()
+{
+    return 
+$@"
+***********************************************************
+*   C: Create
+*   A: Allocate
+*   D: Delete
+*   M: Move
+*   I: Switch Index
+*   H: Hide UI
+*   S: Show UI
+*   Z: Undo
+*   Y: Redo
+***********************************************************
+";
 }
