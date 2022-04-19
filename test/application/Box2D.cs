@@ -1,8 +1,9 @@
 ﻿using committed;
+using test.application.actions;
 
 namespace test.application
 {
-    struct Transform2D
+    public struct Transform2D
     {
         public float X = 0;
         public float Y = 0;
@@ -10,7 +11,7 @@ namespace test.application
         public Transform2D(float x, float y) { X = x; Y = y; }
     }
 
-    class Box : IDisposable
+    public class Box : IDisposable
     {
         public Transform2D Transform2D;
         public bool Deleted { get; private set; }
@@ -28,80 +29,170 @@ namespace test.application
             Deleted = true;
         }
     }
-
-    class MoveBoxAction : IAction
+    
+    public class BoxUIDisplay
     {
-        private readonly Transform2D _current;
-        private readonly Transform2D _new;
-        private readonly ObjectWrapper<Box> _box;
+        private ObjectWrapper<Box> _boxWrapper;
 
-        public MoveBoxAction(ObjectWrapper<Box> box, float x, float y)
+        public bool IsVisible { get; private set; }
+        public Transform2D Position { get; private set; }
+
+        public BoxUIDisplay(ObjectWrapper<Box> boxWrapper)
         {
-            _box = box;
-            _current = box.Object.Transform2D;
-            _new = new Transform2D(x, y);
+            _boxWrapper = boxWrapper;
+            IsVisible = false;
+            Position = new Transform2D(1, 1);
         }
 
-        public void Do()
+
+        public void Show()
         {
-            _box.Object.Transform2D = _new;
+            IsVisible = true;
         }
 
-        public void Undo()
+        public void Hide()
         {
-            _box.Object.Transform2D = _current;
+            IsVisible = false;
+        }
+
+        public void Move(Transform2D transform)
+        {
+            Position = transform;
+        }
+
+        public string Info => $"X:{_boxWrapper.Object.Transform2D.X}, Y:{_boxWrapper.Object.Transform2D.Y}";
+    }
+
+    public class BoxManipulator
+    {
+        private readonly ICommitted _committed;
+        private ObjectWrapper<Box> _boxWrapper;
+
+        public BoxManipulator(ICommitted committed, ObjectWrapper<Box> boxWrapper)
+        {
+            _committed = committed;
+            _boxWrapper = boxWrapper;
+        }
+
+
+        public void Create()
+        {
+            if (_boxWrapper.Object.Deleted)
+            {
+                _committed.Commit(new CreateBoxAction(_boxWrapper, 1, 1));
+            }
+        }
+
+        public void Move(Transform2D transform)
+        {
+            _committed.Commit(new MoveBoxAction(_boxWrapper, transform));
+        }
+
+        public void Delete()
+        {
+            _committed.Commit(new DeleteBoxAction(_boxWrapper));
         }
     }
 
-    class CreateBoxAction : IAction
+    public class BoxUIDisplayManipulator
     {
-        private readonly Transform2D _position;
-        public ObjectWrapper<Box>? BoxWrapper;
+        private readonly ICommitted _committed;
+        private readonly BoxUIDisplay _display;
 
-        public CreateBoxAction(float x, float y)
+        public BoxUIDisplayManipulator(ICommitted committed, BoxUIDisplay display)
         {
-            _position = new Transform2D(x, y);
+            _committed = committed;
+            _display = display;
         }
 
-        public void Do()
+
+        public void Show()
         {
-            var box = new Box(_position);
-            
-            if (BoxWrapper == null)
+            if (!_display.IsVisible)
             {
-                BoxWrapper = new ObjectWrapper<Box>(box);
-            }
-            else
-            {
-                BoxWrapper.Object = box;
+                _committed.Commit(new ShowBoxInfoAction(_display));
             }
         }
 
-        public void Undo()
+        public void Hide()
         {
-            BoxWrapper?.Object.Dispose();
+            if (_display.IsVisible)
+            {
+                _committed.Commit(new HideBoxInfoAction(_display));
+            }
+        }
+
+        public void Move(Transform2D transform)
+        {
+            _committed.Commit(new MoveBoxInfoAction(_display, _display.Position, transform));
         }
     }
 
-    class DeleteBoxAction : IAction
+    public class BoxElement
     {
-        private readonly Transform2D _position;
-        private ObjectWrapper<Box> _box;
+        private readonly ObjectWrapper<Box> _wrapper;
+        private readonly BoxUIDisplay _display;
+        private readonly BoxManipulator _boxManipulator;
+        private readonly BoxUIDisplayManipulator _displayManipulator;
+        private readonly ICommitted _committed;
 
-        public DeleteBoxAction(ObjectWrapper<Box> box)
+        public BoxElement(ICommitted committed, Box box)
         {
-            _position = box.Object.Transform2D;
-            _box = box;
+            _wrapper = new ObjectWrapper<Box>(box);
+            _display = new BoxUIDisplay(_wrapper);
+            _boxManipulator = new BoxManipulator(committed, _wrapper);
+            _displayManipulator = new BoxUIDisplayManipulator(committed, _display);
+            _committed = committed;
+
+            // To preserve creation, push an action now
+            committed.Commit(new CreateBoxAction(_wrapper, box.Transform2D.X, box.Transform2D.Y));
         }
 
-        public void Do()
+        public void Move(Transform2D position)
         {
-            _box.Object.Dispose();
+            if (!_wrapper.Object.Deleted)
+            {
+                _committed.Commit(new List<IAction>
+                {
+                    new MoveBoxAction(_wrapper, position),
+                    new MoveBoxInfoAction(_display, _wrapper.Object.Transform2D, new Transform2D(position.X, position.Y < 5 ? 0 : position.Y - 5))
+                });
+            }
         }
 
-        public void Undo()
+        public void Delete()
         {
-            _box.Object = new Box(_position);
+            if (!_wrapper.Object.Deleted)
+            {
+                _boxManipulator.Delete();
+            }
+        }
+
+        public void ShowInfo()
+        {
+            if (!_wrapper.Object.Deleted)
+            {
+                _displayManipulator.Show();
+            }
+        }
+
+        public void HideInfo()
+        {
+            if (!_wrapper.Object.Deleted)
+            {
+                _displayManipulator.Hide();
+            }
+        }
+
+        public bool Deleted => _wrapper.Object.Deleted;
+
+        public string Meta
+        {
+            get
+            {
+                var box = _wrapper.Object;
+                return $"Allocated:{!box.Deleted}, X:{box.Transform2D.X}, Y:{box.Transform2D.Y}, Info Visible:{_display.IsVisible}, Info X:{_display.Position.X}, Info Y:{_display.Position.Y}";
+            }
         }
     }
 }
