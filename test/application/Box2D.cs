@@ -16,6 +16,8 @@ namespace test.application
         public Transform2D Position;
         public bool Deleted { get; private set; }
 
+        public ConsoleColor Color;
+
         public Box(Transform2D transform2D)
         {
             Position = transform2D;

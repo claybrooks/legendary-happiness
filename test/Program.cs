@@ -2,10 +2,11 @@
 using test.application;
 
 Console.CursorVisible = false;
-
-var committed = new Committed();
+Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+var committed = new FixedSizeCommitHistory(100);
 var boxIdx = 0;
-var boxKey = boxIdx;
+BoxKey boxKey = new BoxKey{ Key = boxIdx };
+
 Dictionary<int, BoxElement> boxElements = new() 
 {
     {
@@ -13,7 +14,7 @@ Dictionary<int, BoxElement> boxElements = new()
     }
 };
 
-var box = boxElements[boxKey];
+var box = boxElements[boxKey.Key];
 PrintBoxData(box);
 
 while (true)
@@ -24,8 +25,13 @@ while (true)
     {
         case ConsoleKey.A:
             box.Create();
-            ++boxKey;
-            if (boxKey > boxIdx) { boxKey = boxIdx; }
+            var old = boxKey.Key;
+            ++boxKey.Key;
+            if (boxKey.Key > boxIdx) { boxKey.Key = boxIdx; }
+            if (boxKey.Key != old)
+            {
+                committed.Commit(new BoxSelectionAction(boxKey, old, boxKey.Key));
+            }
             break;
         case ConsoleKey.C:
             ++boxIdx;
@@ -33,8 +39,8 @@ while (true)
             break;
         case ConsoleKey.D:
             box.Delete();
-            --boxKey;
-            if (boxKey < 0) { boxKey = 0; }
+            --boxKey.Key;
+            if (boxKey.Key < 0) { boxKey.Key = 0; }
             break;
         case ConsoleKey.M:
             Console.Write("Enter x,y: ");
@@ -74,7 +80,12 @@ while (true)
                     idx = -1;
                 }
             }
-            boxKey = idx;
+            var oldKey = boxKey.Key;
+            boxKey.Key = idx;
+            if (boxKey.Key != oldKey)
+            {
+                committed.Commit(new BoxSelectionAction(boxKey, oldKey, boxKey.Key));
+            }
             break;
         case ConsoleKey.UpArrow:
             box.MoveUpOne();
@@ -90,7 +101,7 @@ while (true)
             break;
     }
 
-    box = boxElements[boxKey];
+    box = boxElements[boxKey.Key];
     PrintBoxData(box);
 }
 
@@ -123,7 +134,7 @@ void PrintBoxData(BoxElement selectedBox)
 
     Console.SetCursorPosition(0, 0);
     Console.WriteLine(GetHeader());
-    Console.WriteLine(BoxInfos(boxElements, boxKey));
+    Console.WriteLine(BoxInfos(boxElements, boxKey.Key));
     int currentPosition = Console.CursorTop;
     while (currentPosition < furthestPosition)
     {
@@ -142,29 +153,31 @@ void PrintUIElements(IEnumerable<BoxElement> boxes, BoxElement selectedBox, int 
     // All boxes are 4x4
     foreach (BoxElement boxElement in boxes)
     {
-        if (!boxElement.Deleted)
+        if (boxElement.Deleted)
         {
-            if (Object.ReferenceEquals(boxElement, selectedBox))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-            }
+            continue;
+        }
 
-            for(int i = 0; i < 5; ++i)
+        if (ReferenceEquals(boxElement, selectedBox))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        for(int i = 0; i < 5; ++i)
+        {
+            for(int j = 0; j < 3; ++j)
             {
-                for(int j = 0; j < 3; ++j)
+                var y = offset + boxElement.Position.Y + j;
+                Console.SetCursorPosition(boxElement.Position.X + i, y);
+                Console.Write("*");
+
+                if (furthest < y)
                 {
-                    var y = offset + boxElement.Position.Y + j;
-                    Console.SetCursorPosition(boxElement.Position.X + i, y);
-                    Console.Write("*");
-
-                    if (furthest < y)
-                    {
-                        furthest = y;
-                    }
+                    furthest = y;
                 }
             }
         }
@@ -190,4 +203,33 @@ $@"
 *   Up/Down/Left/Right: Moves the selected box
 ***********************************************************
 ";
+}
+
+public class BoxKey
+{
+    public int Key;
+}
+
+public class BoxSelectionAction : IAction
+{
+    private readonly BoxKey _key;
+    private int _old;
+    private int _new;
+
+    public BoxSelectionAction(BoxKey key, int currentIdx, int newIdx)
+    {
+        _key = key;
+        _old = currentIdx;
+        _new = newIdx;
+    }
+
+    public void Do()
+    {
+        _key.Key = _new;
+    }
+
+    public void Undo()
+    {
+        _key.Key = _old;
+    }
 }
