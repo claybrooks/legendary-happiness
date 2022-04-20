@@ -187,6 +187,7 @@ $@"
 *   S: Show UI
 *   Z: Undo
 *   Y: Redo
+*   Up/Down/Left/Right: Moves the selected box
 ***********************************************************
 ";
 }
