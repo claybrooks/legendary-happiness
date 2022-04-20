@@ -2,14 +2,12 @@
 
 namespace committed
 {
-    public class CommitHistory<U, R> : ICommitted
-        where U : IActionStack
-        where R : IActionStack
+    public class CommitHistory : ICommitted
     {
-        private readonly U _undo;
-        private readonly R _redo;
+        private readonly IActionStack _undo;
+        private readonly IActionStack _redo;
 
-        public CommitHistory(U undo, R redo)
+        public CommitHistory(IActionStack undo, IActionStack redo)
         {
             _undo = undo;
             _redo = redo;
@@ -52,7 +50,7 @@ namespace committed
         }
     }
     
-    public class UnboundedCommitHistory : CommitHistory<UnboundedActionStack, UnboundedActionStack>
+    public class UnboundedCommitHistory : CommitHistory
     {
         public UnboundedCommitHistory() : base (new UnboundedActionStack(), new UnboundedActionStack())
         {
@@ -60,7 +58,7 @@ namespace committed
         }
     }
 
-    public class ConcurrentUnboundedCommitHistory : CommitHistory<ConcurrentUnboundedActionStack, ConcurrentUnboundedActionStack>
+    public class ConcurrentUnboundedCommitHistory : CommitHistory
     {
         public ConcurrentUnboundedCommitHistory() : base(new ConcurrentUnboundedActionStack(), new ConcurrentUnboundedActionStack())
         {
@@ -68,10 +66,19 @@ namespace committed
         }
     }
 
-    public class FixedSizeCommitHistory : CommitHistory<FixedSizeActionStack, UnboundedActionStack>
+    public class FixedSizeRollingCommitHistory : CommitHistory
     {
         // The redo stack can never be larger than the undo stack, therefore only the undo stack needs to be unbounded
-        public FixedSizeCommitHistory(uint maxSize) : base(new FixedSizeActionStack(maxSize), new UnboundedActionStack())
+        public FixedSizeRollingCommitHistory(uint maxSize) : base(new FixedSizeRollingActionStack(maxSize), new UnboundedActionStack())
+        {
+
+        }
+    }
+
+    public class FixedSizeThrowingCommitHistory : CommitHistory
+    {
+        // The redo stack can never be larger than the undo stack, therefore only the undo stack needs to be unbounded
+        public FixedSizeThrowingCommitHistory(uint maxSize) : base(new FixedSizeThrowingActionStack(maxSize), new UnboundedActionStack())
         {
 
         }

@@ -3,7 +3,7 @@ using test.application;
 
 Console.CursorVisible = false;
 Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-var committed = new FixedSizeCommitHistory(10);
+var committed = new UnboundedCommitHistory();
 var boxIdx = 0;
 BoxKey boxKey = new BoxKey{ Key = boxIdx };
 
