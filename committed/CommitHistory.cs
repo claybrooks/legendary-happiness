@@ -60,6 +60,14 @@ namespace committed
         }
     }
 
+    public class ConcurrentUnboundedCommitHistory : CommitHistory<ConcurrentUnboundedActionStack, ConcurrentUnboundedActionStack>
+    {
+        public ConcurrentUnboundedCommitHistory() : base(new ConcurrentUnboundedActionStack(), new ConcurrentUnboundedActionStack())
+        {
+
+        }
+    }
+
     public class FixedSizeCommitHistory : CommitHistory<FixedSizeActionStack, UnboundedActionStack>
     {
         // The redo stack can never be larger than the undo stack, therefore only the undo stack needs to be unbounded
