@@ -15,31 +15,31 @@
             _stack.Clear();
         }
 
-        public IAction Peek()
+        public IAction? Peek()
         {
-            return _stack.First();
-        }
-
-        public IAction Pop()
-        {
-            var action = _stack.First();
-            _stack.RemoveFirst();
-            return action;
+            return _stack.Last?.Value;
         }
 
         public void Push(IAction action)
         {
-            _stack.AddFirst(action);
+            if (_stack.Count == _fixedSize)
+            {
+                _stack.RemoveFirst();
+            }
+            _stack.AddLast(action);
         }
 
         public bool TryPop(out IAction action)
         {
             action = null!;
-            if (_stack.Count() == 0)
+
+            if (_stack.Count == 0)
             {
                 return false;
             }
-            action = Pop();
+
+            action = _stack.Last?.Value!;
+            _stack.RemoveLast();
             return true;
         }
     }

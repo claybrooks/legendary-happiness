@@ -9,14 +9,13 @@
             _stack.Clear();
         }
 
-        public IAction Peek()
+        public IAction? Peek()
         {
-            return _stack.Peek();
-        }
-
-        public IAction Pop()
-        {
-            return _stack.Pop();
+            if (_stack.TryPeek(out var action))
+            {
+                return action;
+            }
+            return null;
         }
 
         public void Push(IAction action)

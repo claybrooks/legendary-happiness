@@ -4,8 +4,7 @@
     {
         void Push(IAction action);
         bool TryPop(out IAction action);
-        IAction Pop();
-        IAction Peek();
+        IAction? Peek();
         void Clear();
     }
 }
