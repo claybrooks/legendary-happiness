@@ -1,6 +1,8 @@
 ﻿using committed;
 using test.application;
 
+Console.CursorVisible = false;
+
 var committed = new Committed();
 var boxIdx = 0;
 var boxKey = boxIdx;
@@ -11,11 +13,11 @@ Dictionary<int, BoxElement> boxElements = new()
     }
 };
 
-PrintBoxData();
+var box = boxElements[boxKey];
+PrintBoxData(box);
 
 while (true)
 {
-    var box = boxElements[boxKey];
     var key = Console.ReadKey();
     Console.WriteLine();
     switch (key.Key)
@@ -42,8 +44,8 @@ while (true)
                 input = Console.ReadLine() ?? "";
             }
             var tokens = input.Split(",");
-            float x = float.Parse(tokens[0]);
-            float y = float.Parse(tokens[1]);
+            int x = int.Parse(tokens[0]);
+            int y = int.Parse(tokens[1]);
             box.Move(new Transform2D(x, y));
 
             break;
@@ -74,9 +76,22 @@ while (true)
             }
             boxKey = idx;
             break;
+        case ConsoleKey.UpArrow:
+            box.MoveUpOne();
+            break;
+        case ConsoleKey.DownArrow:
+            box.MoveDownOne();
+            break;
+        case ConsoleKey.LeftArrow:
+            box.MoveLeftOne();
+            break;
+        case ConsoleKey.RightArrow:
+            box.MoveRightOne();
+            break;
     }
 
-    PrintBoxData();
+    box = boxElements[boxKey];
+    PrintBoxData(box);
 }
 
 string BoxInfos(IReadOnlyDictionary<int, BoxElement> boxes, int selected)
@@ -102,10 +117,10 @@ string BoxInfos(IReadOnlyDictionary<int, BoxElement> boxes, int selected)
     return data;
 }
 
-void PrintBoxData()
+void PrintBoxData(BoxElement selectedBox)
 {
     int furthestPosition = Console.CursorTop;
-    Console.CursorVisible = false;
+
     Console.SetCursorPosition(0, 0);
     Console.WriteLine(GetHeader());
     Console.WriteLine(BoxInfos(boxElements, boxKey));
@@ -116,7 +131,46 @@ void PrintBoxData()
         --furthestPosition;
     }
     Console.CursorTop = currentPosition;
-    Console.CursorVisible = true;
+    PrintUIElements(boxElements.Values, selectedBox, currentPosition);
+    Console.SetCursorPosition(0, Console.CursorTop);
+}
+
+void PrintUIElements(IEnumerable<BoxElement> boxes, BoxElement selectedBox, int offset)
+{
+    int furthest = offset;
+
+    // All boxes are 4x4
+    foreach (BoxElement boxElement in boxes)
+    {
+        if (!boxElement.Deleted)
+        {
+            if (Object.ReferenceEquals(boxElement, selectedBox))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+
+            for(int i = 0; i < 5; ++i)
+            {
+                for(int j = 0; j < 3; ++j)
+                {
+                    var y = offset + boxElement.Position.Y + j;
+                    Console.SetCursorPosition(boxElement.Position.X + i, y);
+                    Console.Write("*");
+
+                    if (furthest < y)
+                    {
+                        furthest = y;
+                    }
+                }
+            }
+        }
+    }
+    Console.ForegroundColor = ConsoleColor.White;
+    Console.SetCursorPosition(0, furthest);
 }
 
 string GetHeader()

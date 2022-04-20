@@ -5,27 +5,27 @@ namespace test.application
 {
     public struct Transform2D
     {
-        public float X = 0;
-        public float Y = 0;
+        public int X = 0;
+        public int Y = 0;
 
-        public Transform2D(float x, float y) { X = x; Y = y; }
+        public Transform2D(int x, int y) { X = x; Y = y; }
     }
 
     public class Box : IDisposable
     {
-        public Transform2D Transform2D;
+        public Transform2D Position;
         public bool Deleted { get; private set; }
 
         public Box(Transform2D transform2D)
         {
-            Transform2D = transform2D;
+            Position = transform2D;
             Deleted = false;
         }
 
         public void Dispose()
         {
-            Transform2D.X = -1;
-            Transform2D.Y = -1;
+            Position.X = -1;
+            Position.Y = -1;
             Deleted = true;
         }
     }
@@ -60,7 +60,7 @@ namespace test.application
             Position = transform;
         }
 
-        public string Info => $"X:{_boxWrapper.Object.Transform2D.X}, Y:{_boxWrapper.Object.Transform2D.Y}";
+        public string Info => $"X:{_boxWrapper.Object.Position.X}, Y:{_boxWrapper.Object.Position.Y}";
     }
 
     public class BoxManipulator
@@ -145,17 +145,17 @@ namespace test.application
             _committed = committed;
 
             // To preserve creation, push an action now
-            committed.Commit(new CreateBoxAction(_wrapper, box.Transform2D.X, box.Transform2D.Y));
+            committed.Commit(new CreateBoxAction(_wrapper, box.Position.X, box.Position.Y));
         }
 
         public void Move(Transform2D position)
         {
-            if (!_wrapper.Object.Deleted)
+            if (!_wrapper.Object.Deleted && position.X >= 0 && position.Y >= 0)
             {
                 _committed.Commit(new List<IAction>
                 {
                     new MoveBoxAction(_wrapper, position),
-                    new MoveBoxInfoAction(_display, _wrapper.Object.Transform2D, new Transform2D(position.X, position.Y < 5 ? 0 : position.Y - 5))
+                    new MoveBoxInfoAction(_display, _wrapper.Object.Position, new Transform2D(position.X, position.Y < 5 ? 0 : position.Y - 5))
                 });
             }
         }
@@ -199,8 +199,27 @@ namespace test.application
             get
             {
                 var box = _wrapper.Object;
-                return $"Allocated:{!box.Deleted}, X:{box.Transform2D.X}, Y:{box.Transform2D.Y}, Info Visible:{_display.IsVisible}, Info X:{_display.Position.X}, Info Y:{_display.Position.Y}";
+                return $"Allocated:{!box.Deleted}, X:{box.Position.X}, Y:{box.Position.Y}, Info Visible:{_display.IsVisible}, Info X:{_display.Position.X}, Info Y:{_display.Position.Y}";
             }
+        }
+
+        public Transform2D Position => _wrapper.Object.Position;
+
+        public void MoveUpOne()
+        {
+            Move(new Transform2D(Position.X, Position.Y-1));
+        }
+        public void MoveDownOne()
+        {
+            Move(new Transform2D(Position.X, Position.Y + 1));
+        }
+        public void MoveLeftOne()
+        {
+            Move(new Transform2D(Position.X - 1, Position.Y));
+        }
+        public void MoveRightOne()
+        {
+            Move(new Transform2D(Position.X + 1, Position.Y));
         }
     }
 }

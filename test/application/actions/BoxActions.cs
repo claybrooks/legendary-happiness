@@ -11,18 +11,18 @@ namespace test.application.actions
         public MoveBoxAction(ObjectWrapper<Box> box, Transform2D transform)
         {
             _box = box;
-            _current = box.Object.Transform2D;
+            _current = box.Object.Position;
             _new = transform;
         }
 
         public void Do()
         {
-            _box.Object.Transform2D = _new;
+            _box.Object.Position = _new;
         }
 
         public void Undo()
         {
-            _box.Object.Transform2D = _current;
+            _box.Object.Position = _current;
         }
     }
 
@@ -31,7 +31,7 @@ namespace test.application.actions
         private readonly Transform2D _position;
         public ObjectWrapper<Box> BoxWrapper;
 
-        public CreateBoxAction(ObjectWrapper<Box> box, float x, float y)
+        public CreateBoxAction(ObjectWrapper<Box> box, int x, int y)
         {
             BoxWrapper = box;
             _position = new Transform2D(x, y);
@@ -59,7 +59,7 @@ namespace test.application.actions
 
         public DeleteBoxAction(ObjectWrapper<Box> box)
         {
-            _position = box.Object.Transform2D;
+            _position = box.Object.Position;
             _box = box;
         }
 
