@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace committed.stacks
+namespace committed.defaults.stacks
 {
     public class ConcurrentUnboundedActionStack : IActionStack
     {

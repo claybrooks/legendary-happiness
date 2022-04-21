@@ -1,6 +1,4 @@
-﻿using committed.stacks;
-
-namespace committed
+﻿namespace committed
 {
     public class CommitHistory : ICommitted
     {
@@ -23,6 +21,16 @@ namespace committed
         public virtual void Commit(IEnumerable<IAction> actions)
         {
             Commit(new ChainedActions(actions));
+        }
+
+        public void Commit(Action @do, Action undo)
+        {
+            Commit(new CallbackAction(@do, undo));
+        }
+
+        public void Commit(IEnumerable<Tuple<Action, Action>> actions)
+        {
+            Commit(actions.Select((a) => new CallbackAction(a.Item1, a.Item2)));
         }
 
         public void Undo()

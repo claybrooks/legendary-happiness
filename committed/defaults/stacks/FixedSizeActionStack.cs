@@ -1,4 +1,4 @@
-﻿namespace committed.stacks
+﻿namespace committed.defaults.stacks
 {
     public class FixedSizeActionStack : IActionStack
     {

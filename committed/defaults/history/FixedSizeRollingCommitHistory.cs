@@ -1,6 +1,6 @@
-﻿using committed.stacks;
+﻿using committed.defaults.stacks;
 
-namespace committed.defaults
+namespace committed.defaults.history
 {
     public class FixedSizeRollingCommitHistory : CommitHistory
     {
