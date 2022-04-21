@@ -5,6 +5,7 @@
         private readonly LinkedList<IAction> _stack = new LinkedList<IAction>();
         private readonly uint _fixedSize;
         private readonly bool _throwWhenFull;
+
         public FixedSizeActionStack(uint maxSize, bool throwWhenFull)
         {
             _fixedSize = maxSize;
@@ -46,20 +47,6 @@
             action = _stack.Last?.Value!;
             _stack.RemoveLast();
             return true;
-        }
-    }
-
-    public class FixedSizeThrowingActionStack : FixedSizeActionStack
-    {
-        public FixedSizeThrowingActionStack(uint maxSize) : base(maxSize, true)
-        {
-        }
-    }
-    
-    public class FixedSizeRollingActionStack : FixedSizeActionStack
-    {
-        public FixedSizeRollingActionStack(uint maxSize) : base(maxSize, false)
-        {
         }
     }
 }

@@ -13,8 +13,6 @@ namespace committed
             _redo = redo;
         }
 
-        public IAction? Current => _undo.Peek();
-
         public virtual void Commit(IAction action)
         {
             _redo.Clear();
@@ -48,39 +46,11 @@ namespace committed
             action.Do();
             _undo.Push(action);
         }
-    }
-    
-    public class UnboundedCommitHistory : CommitHistory
-    {
-        public UnboundedCommitHistory() : base (new UnboundedActionStack(), new UnboundedActionStack())
+
+        public void Clear()
         {
-
-        }
-    }
-
-    public class ConcurrentUnboundedCommitHistory : CommitHistory
-    {
-        public ConcurrentUnboundedCommitHistory() : base(new ConcurrentUnboundedActionStack(), new ConcurrentUnboundedActionStack())
-        {
-
-        }
-    }
-
-    public class FixedSizeRollingCommitHistory : CommitHistory
-    {
-        // The redo stack can never be larger than the undo stack, therefore only the undo stack needs to be unbounded
-        public FixedSizeRollingCommitHistory(uint maxSize) : base(new FixedSizeRollingActionStack(maxSize), new UnboundedActionStack())
-        {
-
-        }
-    }
-
-    public class FixedSizeThrowingCommitHistory : CommitHistory
-    {
-        // The redo stack can never be larger than the undo stack, therefore only the undo stack needs to be unbounded
-        public FixedSizeThrowingCommitHistory(uint maxSize) : base(new FixedSizeThrowingActionStack(maxSize), new UnboundedActionStack())
-        {
-
+            _undo.Clear();
+            _redo.Clear();
         }
     }
 }

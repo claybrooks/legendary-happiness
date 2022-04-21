@@ -1,8 +1,10 @@
-﻿namespace committed.stacks
+﻿using System.Collections.Concurrent;
+
+namespace committed.stacks
 {
-    public class UnboundedActionStack : IActionStack
+    public class ConcurrentUnboundedActionStack : IActionStack
     {
-        private readonly Stack<IAction> _stack = new Stack<IAction>();
+        private readonly ConcurrentStack<IAction> _stack = new ConcurrentStack<IAction>();
 
         public void Clear()
         {
