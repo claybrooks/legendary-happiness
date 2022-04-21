@@ -1,4 +1,9 @@
-﻿namespace committed
+﻿using UndoRedo;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace UndoRedo
 {
     public class CommitHistory : ICommitted
     {
@@ -11,14 +16,14 @@
             _redo = redo;
         }
 
-        public virtual void Commit(IAction action)
+        public void Commit(IAction action)
         {
             _redo.Clear();
             _undo.Push(action);
             action.Do();
         }
 
-        public virtual void Commit(IEnumerable<IAction> actions)
+        public void Commit(IEnumerable<IAction> actions)
         {
             Commit(new ChainedActions(actions));
         }
@@ -28,9 +33,9 @@
             Commit(new CallbackAction(@do, undo));
         }
 
-        public void Commit(IEnumerable<Tuple<Action, Action>> actions)
+        public void Commit(IEnumerable<(Action @do, Action undo)> actions)
         {
-            Commit(actions.Select((a) => new CallbackAction(a.Item1, a.Item2)));
+            Commit(actions.Select(action => new CallbackAction(action.@do, action.undo)));
         }
 
         public void Undo()

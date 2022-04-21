@@ -1,4 +1,4 @@
-﻿namespace committed
+﻿namespace UndoRedo
 {
     public interface IActionStack
     {

@@ -1,8 +1,11 @@
-﻿namespace committed.defaults.stacks
+﻿using System.Collections.Concurrent;
+using UndoRedo;
+
+namespace UndoRedo.defaults.stacks
 {
-    public class UnboundedActionStack : IActionStack
+    internal class ConcurrentUnboundedActionStack : IActionStack
     {
-        private readonly Stack<IAction> _stack = new Stack<IAction>();
+        private readonly ConcurrentStack<IAction> _stack = new ConcurrentStack<IAction>();
 
         public void Clear()
         {

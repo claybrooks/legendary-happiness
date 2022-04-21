@@ -1,4 +1,7 @@
-﻿namespace committed
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace UndoRedo
 {
     public class ChainedActions : IAction
     {

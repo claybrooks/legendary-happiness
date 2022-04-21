@@ -1,6 +1,6 @@
-﻿using committed.defaults.stacks;
+﻿using UndoRedo.defaults.stacks;
 
-namespace committed.defaults.history
+namespace UndoRedo.defaults
 {
     public class UnboundedCommitHistory : CommitHistory
     {

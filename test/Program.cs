@@ -1,6 +1,6 @@
-﻿using committed;
-using committed.defaults.history;
+﻿using UndoRedo.defaults;
 using test.application;
+using UndoRedo;
 
 Console.CursorVisible = false;
 

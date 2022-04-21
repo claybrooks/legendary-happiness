@@ -1,6 +1,6 @@
-﻿namespace committed.defaults.stacks
+﻿namespace UndoRedo.defaults.stacks
 {
-    public class FixedSizeThrowingActionStack : FixedSizeActionStack
+    internal class FixedSizeThrowingActionStack : FixedSizeActionStack
     {
         public FixedSizeThrowingActionStack(uint maxSize) : base(maxSize, true)
         {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace committed
+namespace UndoRedo
 {
-    internal class CallbackAction : IAction
+    public class CallbackAction : IAction
     {
         private readonly Action _do;
         private readonly Action _undo;
@@ -19,7 +19,7 @@ namespace committed
 
         public void Do()
         {
-           _do();
+            _do();
         }
 
         public void Undo()

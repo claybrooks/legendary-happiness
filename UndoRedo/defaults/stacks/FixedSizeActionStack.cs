@@ -1,6 +1,9 @@
-﻿namespace committed.defaults.stacks
+﻿using System;
+using System.Collections.Generic;
+
+namespace UndoRedo.defaults.stacks
 {
-    public class FixedSizeActionStack : IActionStack
+    internal class FixedSizeActionStack : IActionStack
     {
         private readonly LinkedList<IAction> _stack = new LinkedList<IAction>();
         private readonly uint _fixedSize;

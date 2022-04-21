@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\committed\committed.csproj" />
+    <ProjectReference Include="..\UndoRedo\UndoRedo.csproj" />
   </ItemGroup>
 
 </Project>
