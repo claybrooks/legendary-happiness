@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UndoRedo
 {
-    public class CallbackAction : IAction
+    public class CallbackAction : IUndoRedoAction
     {
         private readonly Action _do;
         private readonly Action _undo;

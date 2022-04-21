@@ -3,16 +3,16 @@ using UndoRedo;
 
 namespace UndoRedo.defaults.stacks
 {
-    internal class UnboundedActionStack : IActionStack
+    internal class UnboundedActionStack : IUndoRedoActionStack
     {
-        private readonly Stack<IAction> _stack = new Stack<IAction>();
+        private readonly Stack<IUndoRedoAction> _stack = new Stack<IUndoRedoAction>();
 
         public void Clear()
         {
             _stack.Clear();
         }
 
-        public IAction? Peek()
+        public IUndoRedoAction? Peek()
         {
             if (_stack.TryPeek(out var action))
             {
@@ -21,12 +21,12 @@ namespace UndoRedo.defaults.stacks
             return null;
         }
 
-        public void Push(IAction action)
+        public void Push(IUndoRedoAction action)
         {
             _stack.Push(action);
         }
 
-        public bool TryPop(out IAction action)
+        public bool TryPop(out IUndoRedoAction action)
         {
             return _stack.TryPop(out action!);
         }

@@ -3,11 +3,11 @@ using System.Linq;
 
 namespace UndoRedo
 {
-    public class ChainedActions : IAction
+    public class ChainedActions : IUndoRedoAction
     {
-        private readonly IEnumerable<IAction> _actions;
+        private readonly IEnumerable<IUndoRedoAction> _actions;
 
-        public ChainedActions(IEnumerable<IAction> actions)
+        public ChainedActions(IEnumerable<IUndoRedoAction> actions)
         {
             _actions = actions;
         }

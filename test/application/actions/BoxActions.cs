@@ -2,7 +2,7 @@
 
 namespace test.application.actions
 {
-    class MoveBoxAction : IAction
+    class MoveBoxAction : IUndoRedoAction
     {
         private readonly Transform2D _current;
         private readonly Transform2D _new;
@@ -26,7 +26,7 @@ namespace test.application.actions
         }
     }
 
-    class CreateBoxAction : IAction
+    class CreateBoxAction : IUndoRedoAction
     {
         private readonly Transform2D _position;
         public ObjectWrapper<Box> BoxWrapper;
@@ -52,7 +52,7 @@ namespace test.application.actions
         }
     }
 
-    class DeleteBoxAction : IAction
+    class DeleteBoxAction : IUndoRedoAction
     {
         private readonly Transform2D _position;
         private ObjectWrapper<Box> _box;

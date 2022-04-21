@@ -4,6 +4,24 @@
     <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Authors>Clay Brooks, Jake Manfre</Authors>
+    <Description>A lightweight and easy to use undo/framework.</Description>
+    <Copyright>This is free and unencumbered software released into the public domain.</Copyright>
+    <PackageProjectUrl>https://github.com/claybrooks/legendary-happiness</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/claybrooks/legendary-happiness</RepositoryUrl>
+    <PackageTags>undo;redo;commit</PackageTags>
+    <PackageReleaseNotes>Updated readme with examples</PackageReleaseNotes>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseExpression>Unlicense</PackageLicenseExpression>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\Readme.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

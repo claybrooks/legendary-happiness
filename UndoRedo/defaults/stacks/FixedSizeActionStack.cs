@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace UndoRedo.defaults.stacks
 {
-    internal class FixedSizeActionStack : IActionStack
+    internal class FixedSizeActionStack : IUndoRedoActionStack
     {
-        private readonly LinkedList<IAction> _stack = new LinkedList<IAction>();
+        private readonly LinkedList<IUndoRedoAction> _stack = new LinkedList<IUndoRedoAction>();
         private readonly uint _fixedSize;
         private readonly bool _throwWhenFull;
 
@@ -20,12 +20,12 @@ namespace UndoRedo.defaults.stacks
             _stack.Clear();
         }
 
-        public IAction? Peek()
+        public IUndoRedoAction? Peek()
         {
             return _stack.Last?.Value;
         }
 
-        public void Push(IAction action)
+        public void Push(IUndoRedoAction action)
         {
             if (_stack.Count == _fixedSize)
             {
@@ -38,7 +38,7 @@ namespace UndoRedo.defaults.stacks
             _stack.AddLast(action);
         }
 
-        public bool TryPop(out IAction action)
+        public bool TryPop(out IUndoRedoAction action)
         {
             action = null!;
 

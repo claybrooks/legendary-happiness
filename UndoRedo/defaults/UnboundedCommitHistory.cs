@@ -9,4 +9,12 @@ namespace UndoRedo.defaults
 
         }
     }
+
+    public class ConcurrentUnboundedCommitHistory : ConcurrentCommitHistory
+    {
+        public ConcurrentUnboundedCommitHistory() : base(new UnboundedActionStack(), new UnboundedActionStack())
+        {
+
+        }
+    }
 }

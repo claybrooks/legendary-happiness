@@ -1,44 +1,43 @@
-﻿using UndoRedo;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace UndoRedo
 {
-    public class CommitHistory : ICommitted
+    public class CommitHistory : IUndoRedo
     {
-        private readonly IActionStack _undo;
-        private readonly IActionStack _redo;
+        private readonly IUndoRedoActionStack _undo;
+        private readonly IUndoRedoActionStack _redo;
 
-        public CommitHistory(IActionStack undo, IActionStack redo)
+        public CommitHistory(IUndoRedoActionStack undo, IUndoRedoActionStack redo)
         {
             _undo = undo;
             _redo = redo;
         }
 
-        public void Commit(IAction action)
+        public virtual void Commit(IUndoRedoAction action)
         {
             _redo.Clear();
             _undo.Push(action);
             action.Do();
         }
 
-        public void Commit(IEnumerable<IAction> actions)
+        public virtual void Commit(IEnumerable<IUndoRedoAction> actions)
         {
             Commit(new ChainedActions(actions));
         }
 
-        public void Commit(Action @do, Action undo)
+        public virtual void Commit(Action @do, Action undo)
         {
             Commit(new CallbackAction(@do, undo));
         }
 
-        public void Commit(IEnumerable<(Action @do, Action undo)> actions)
+        public virtual void Commit(IEnumerable<(Action @do, Action undo)> actions)
         {
             Commit(actions.Select(action => new CallbackAction(action.@do, action.undo)));
         }
 
-        public void Undo()
+        public virtual void Undo()
         {
             if (!_undo.TryPop(out var action))
             {
@@ -49,7 +48,7 @@ namespace UndoRedo
             _redo.Push(action);
         }
 
-        public void Redo()
+        public virtual void Redo()
         {
             if (!_redo.TryPop(out var action))
             {
@@ -60,7 +59,7 @@ namespace UndoRedo
             _undo.Push(action);
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             _undo.Clear();
             _redo.Clear();

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace UndoRedo
 {
-    public interface ICommitted
+    public interface IUndoRedo
     {
         /// <summary>
         /// 
         /// </summary>
         /// <param name="action"></param>
-        void Commit(IAction action);
+        void Commit(IUndoRedoAction action);
 
         /// <summary>
         /// <paramref name="do"/> is invoked during the commit
@@ -22,7 +22,7 @@ namespace UndoRedo
         /// </summary>
         /// <param name="action"></param>
         /// <remarks>All committed actions will be invoked upon a single call of Undo/Redo</remarks>
-        void Commit(IEnumerable<IAction> actions);
+        void Commit(IEnumerable<IUndoRedoAction> actions);
 
         /// <summary>
         /// 

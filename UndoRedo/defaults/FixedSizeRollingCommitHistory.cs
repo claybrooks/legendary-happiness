@@ -9,4 +9,12 @@ namespace UndoRedo.defaults
 
         }
     }
+
+    public class ConcurrentFixedSizeRollingCommitHistory : ConcurrentCommitHistory
+    {
+        public ConcurrentFixedSizeRollingCommitHistory(uint maxSize) : base(new FixedSizeRollingActionStack(maxSize), new UnboundedActionStack())
+        {
+
+        }
+    }
 }

@@ -1,10 +1,9 @@
-﻿using UndoRedo.defaults;
-using test.application;
+﻿using test.application;
 using UndoRedo;
 
 Console.CursorVisible = false;
 
-var committed = new UnboundedCommitHistory();
+IUndoRedo committed = UndoRedoFactory.Create();
 
 var boxIdx = 0;
 BoxKey boxKey = new BoxKey{ Key = boxIdx };
@@ -212,7 +211,7 @@ public class BoxKey
     public int Key;
 }
 
-public class BoxSelectionAction : IAction
+public class BoxSelectionAction : IUndoRedoAction
 {
     private readonly BoxKey _key;
     private int _old;
@@ -236,7 +235,7 @@ public class BoxSelectionAction : IAction
     }
 }
 
-class EmptyAction : IAction
+class EmptyAction : IUndoRedoAction
 {
     public void Do()
     {

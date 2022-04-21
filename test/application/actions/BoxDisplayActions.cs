@@ -7,7 +7,7 @@ using UndoRedo;
 
 namespace test.application.actions
 {
-    class ShowBoxInfoAction : IAction
+    class ShowBoxInfoAction : IUndoRedoAction
     {
         private readonly BoxUIDisplay _display;
 
@@ -27,7 +27,7 @@ namespace test.application.actions
         }
     }
 
-    class HideBoxInfoAction : IAction
+    class HideBoxInfoAction : IUndoRedoAction
     {
         private readonly BoxUIDisplay _display;
 
@@ -47,7 +47,7 @@ namespace test.application.actions
         }
     }
 
-    class MoveBoxInfoAction : IAction
+    class MoveBoxInfoAction : IUndoRedoAction
     {
         private readonly BoxUIDisplay _display;
         private readonly Transform2D _newPosition;

@@ -67,10 +67,10 @@ namespace test.application
 
     public class BoxManipulator
     {
-        private readonly ICommitted _committed;
+        private readonly IUndoRedo _committed;
         private ObjectWrapper<Box> _boxWrapper;
 
-        public BoxManipulator(ICommitted committed, ObjectWrapper<Box> boxWrapper)
+        public BoxManipulator(IUndoRedo committed, ObjectWrapper<Box> boxWrapper)
         {
             _committed = committed;
             _boxWrapper = boxWrapper;
@@ -98,10 +98,10 @@ namespace test.application
 
     public class BoxUIDisplayManipulator
     {
-        private readonly ICommitted _committed;
+        private readonly IUndoRedo _committed;
         private readonly BoxUIDisplay _display;
 
-        public BoxUIDisplayManipulator(ICommitted committed, BoxUIDisplay display)
+        public BoxUIDisplayManipulator(IUndoRedo committed, BoxUIDisplay display)
         {
             _committed = committed;
             _display = display;
@@ -136,9 +136,9 @@ namespace test.application
         private readonly BoxUIDisplay _display;
         private readonly BoxManipulator _boxManipulator;
         private readonly BoxUIDisplayManipulator _displayManipulator;
-        private readonly ICommitted _committed;
+        private readonly IUndoRedo _committed;
 
-        public BoxElement(ICommitted committed, Box box)
+        public BoxElement(IUndoRedo committed, Box box)
         {
             _wrapper = new ObjectWrapper<Box>(box);
             _display = new BoxUIDisplay(_wrapper);
@@ -154,7 +154,7 @@ namespace test.application
         {
             if (!_wrapper.Object.Deleted && position.X >= 0 && position.Y >= 0)
             {
-                _committed.Commit(new List<IAction>
+                _committed.Commit(new List<IUndoRedoAction>
                 {
                     new MoveBoxAction(_wrapper, position),
                     new MoveBoxInfoAction(_display, _wrapper.Object.Position, new Transform2D(position.X, position.Y < 5 ? 0 : position.Y - 5))

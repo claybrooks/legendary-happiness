@@ -1,6 +1,6 @@
 ﻿namespace UndoRedo
 {
-    public interface IAction
+    public interface IUndoRedoAction
     {
         /// <summary>
         /// Called during commit and redo
